@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+python_path.local.txt
+weights/*.pth
+weights/*.part
+weights/*.tmp
+demo_outputs/inputs/
+demo_outputs/api-test-*/
+dist/
+/.publish/
+!testdata/RealSet65/*.jpg
+!testdata/RealSR/*.jpg
+!testdata/RealSet128/*.jpg

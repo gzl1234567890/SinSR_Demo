@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#f5f5f7">
+  <title>SinSR · 图像超分辨率演示</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230066d6'/%3E%3Cpath d='M8 12V8h4m8 0h4v4m0 8v4h-4m-8 0H8v-4' fill='none' stroke='white' stroke-width='2.5'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="/static/style.css?v=__ASSET_VERSION__"><script src="/static/app.js?v=__ASSET_VERSION__" defer></script>
+</head>
+<body>
+<svg class="icon-defs" aria-hidden="true"><defs>
+<symbol id="i-expand" viewBox="0 0 24 24"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5"/></symbol>
+<symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V3m-5 5 5-5 5 5M4 15v6h16v-6"/></symbol>
+<symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h15m-6-6 6 6-6 6"/></symbol>
+<symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v13m-5-5 5 5 5-5M4 17v4h16v-4"/></symbol>
+<symbol id="i-split" viewBox="0 0 24 24"><path d="M12 3v18M8 9l-3 3 3 3m8-6 3 3-3 3"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></symbol>
+<symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></symbol>
+<symbol id="i-spark" viewBox="0 0 24 24"><path d="m12 3 2.3 6.7L21 12l-6.7 2.3L12 21l-2.3-6.7L3 12l6.7-2.3L12 3Z"/></symbol>
+</defs></svg>
+<header class="site-header">
+  <a class="brand" href="/" aria-label="SinSR 首页"><span class="brand-mark"><svg aria-hidden="true"><use href="#i-expand"/></svg></span><span>SinSR</span></a>
+  <span class="header-description">图像超分辨率</span>
+  <div class="header-actions"><span id="machine-status" class="machine-status"><span class="status-dot"></span><span id="machine-text">检查环境</span></span><button id="fullscreen" class="button button-quiet"><svg aria-hidden="true"><use href="#i-expand"/></svg><span>全屏</span></button></div>
+</header>
+<main class="workspace">
+<aside class="controls" aria-label="演示控制">
+  <div class="section-heading"><h1>图像</h1><span id="library-count" class="muted"></span></div>
+  <div class="source-tabs segmented" role="tablist" aria-label="图片来源">
+    <button id="tab-featured" role="tab" aria-selected="true" aria-controls="panel-featured" class="active">精选</button>
+    <button id="tab-library" role="tab" aria-selected="false" aria-controls="panel-library" tabindex="-1">测试集</button>
+    <button id="tab-upload" role="tab" aria-selected="false" aria-controls="panel-upload" tabindex="-1">上传</button>
+  </div>
+  <section id="panel-featured" class="source-panel" role="tabpanel" aria-labelledby="tab-featured"><div id="examples" class="examples" aria-label="精选图片"></div></section>
+  <section id="panel-library" class="source-panel" role="tabpanel" aria-labelledby="tab-library" hidden>
+    <label class="sr-only" for="dataset-filter">选择测试集</label><select id="dataset-filter"><option value="all">全部测试集</option><option value="RealSet65">RealSet65</option><option value="RealSR">RealSR</option><option value="RealSet128">RealSet128</option></select>
+    <div class="search-field"><svg aria-hidden="true"><use href="#i-search"/></svg><input id="library-search" type="search" aria-label="搜索图片文件名" placeholder="搜索文件名" maxlength="120" autocomplete="off"></div>
+    <div id="library-grid" class="library-grid" aria-label="测试集图片" aria-live="polite"></div><p id="library-empty" class="library-empty" hidden>没有匹配的图片</p>
+    <div class="pagination"><span id="library-total" class="muted"></span><div><button id="library-prev" class="icon-button" aria-label="上一页" disabled><svg aria-hidden="true"><use href="#i-chevron"/></svg></button><span id="library-page">1 / 1</span><button id="library-next" class="icon-button" aria-label="下一页" disabled><svg aria-hidden="true"><use href="#i-chevron"/></svg></button></div></div>
+  </section>
+  <section id="panel-upload" class="source-panel" role="tabpanel" aria-labelledby="tab-upload" hidden><label id="upload-zone" class="upload-zone" for="file-input"><svg aria-hidden="true"><use href="#i-upload"/></svg><strong>点击或拖入图片</strong><small>JPG、PNG、WebP</small><input id="file-input" type="file" accept="image/png,image/jpeg,image/webp"></label></section>
+  <div class="selected-image"><span id="selected-title">选择图片</span><span id="selected-size"></span></div>
+  <div class="mode-section"><label for="mode">处理方式</label><select id="mode"><option value="replay">已保存结果</option><option value="live">实时 SinSR</option><option value="bicubic">普通插值</option></select><p id="mode-hint" class="mode-hint"></p></div>
+  <details class="advanced"><summary>参数设置</summary><div class="parameter-row"><label for="seed">随机种子</label><input id="seed" type="number" min="0" max="2147483647" value="12345" step="1"></div><div class="parameter-row"><span>放大倍数</span><span>4×</span></div></details>
+  <button id="run" class="button button-primary" disabled><svg aria-hidden="true"><use href="#i-spark"/></svg><span id="run-label">开始处理</span></button>
+  <div id="process-status" class="process-status" role="status" aria-live="polite"></div><div id="error" class="error-message" role="alert" hidden></div>
+</aside>
+<section class="visual-workspace" aria-label="图像结果与对比">
+  <div class="viewer-toolbar"><div class="viewer-heading"><h2>图像对比</h2><span id="result-badge" class="result-badge">预览</span></div><div class="view-switch segmented" role="group" aria-label="对比布局"><button id="view-slider" class="active" aria-pressed="true">滑动</button><button id="view-side" aria-pressed="false">并排</button></div></div>
+  <div id="comparison" class="comparison is-empty" tabindex="0" aria-label="图像对比，点击选择局部细节">
+    <div class="comparison-layer comparison-before"><img id="image-before" alt="输入图片" draggable="false"></div><div class="comparison-layer comparison-after"><img id="image-after" alt="处理结果" draggable="false"></div>
+    <span id="label-before" class="image-label label-before">原图</span><span id="label-after" class="image-label label-after" hidden>SinSR</span>
+    <div id="divider" class="divider" hidden><span><svg aria-hidden="true"><use href="#i-split"/></svg></span></div><div id="detail-marker" class="detail-marker" hidden></div>
+    <div id="processing-overlay" class="processing-overlay" hidden><span class="spinner"></span><strong id="processing-title">正在处理</strong><span id="processing-message">请稍候</span></div>
+  </div>
+  <div class="comparison-bottom"><span id="compare-hint" class="sr-only"></span><div id="slider-control" class="slider-control" hidden><label for="compare-range">对比位置</label><input id="compare-range" type="range" min="0" max="100" value="50" aria-label="结果对比分界线位置"><span id="range-value">50%</span></div></div>
+  <div class="result-strip"><div><span>输入尺寸</span><strong id="stat-input">—</strong></div><svg class="size-arrow" aria-hidden="true"><use href="#i-arrow"/></svg><div><span>输出尺寸</span><strong id="stat-output">—</strong></div><div><span id="stat-time-label">处理耗时</span><strong id="stat-time">—</strong></div><a id="download" class="button button-download" hidden download><svg aria-hidden="true"><use href="#i-download"/></svg>下载结果</a></div>
+  <section class="details-section"><div class="section-heading"><h2>局部细节</h2><span id="detail-caption" class="sr-only"></span><button id="reset-detail" class="text-button" hidden>还原位置</button></div><div class="detail-grid"><figure><div class="detail-canvas-wrap"><canvas id="crop-before" width="640" height="280"></canvas></div><figcaption id="crop-label-before">对照图</figcaption></figure><figure><div class="detail-canvas-wrap"><canvas id="crop-after" width="640" height="280"></canvas></div><figcaption id="crop-label-after">处理结果</figcaption></figure></div></section>
+</section>
+</main>
+<footer class="app-footer"><a href="https://github.com/wyf0912/SinSR/" target="_blank" rel="noopener noreferrer">SinSR 源代码<svg aria-hidden="true"><use href="#i-arrow"/></svg></a></footer>
+</body>
+</html>

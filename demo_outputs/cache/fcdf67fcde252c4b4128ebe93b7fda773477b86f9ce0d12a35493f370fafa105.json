@@ -1,0 +1,16 @@
+{
+  "version": "sinsr-v1-x4-patch128-2026-10",
+  "digest": "b2c192d3f035b0848969a0c9e3ca26f4ff279257aa680e4e876cbd74636d7067",
+  "seed": 12345,
+  "input_file": "5371ca91dd284aa483562d2cdde5f7dd-input.png",
+  "baseline_file": "5371ca91dd284aa483562d2cdde5f7dd-bicubic.png",
+  "output_file": "5371ca91dd284aa483562d2cdde5f7dd-sr.png",
+  "input_width": 197,
+  "input_height": 136,
+  "elapsed_seconds": 1.933,
+  "file_hashes": {
+    "input_file": "23a77777c32cebc6ca55a5a6c4eec0c2d28784e49ab763d308b67e1d633949a2",
+    "baseline_file": "a4710b84e9ba25937cc94152aea32d4c14563047ec2d4974c811b07c909b1b67",
+    "output_file": "fc086ab55d1992353fc5a79cfdcbf4e78031c2302444e26e157594c1a72b56ba"
+  }
+}
